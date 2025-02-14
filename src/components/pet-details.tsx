@@ -17,7 +17,7 @@ function TopBar() {
   return (
     <div className="flex items-center h-[100px] bg-white border-b border-black-[0.08] px-8">
       <Image
-        src=""
+        src="https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png"
         alt="selected pet image"
         width={75}
         height={75}
