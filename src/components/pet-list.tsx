@@ -1,21 +1,28 @@
+import { Pet } from "@/lib/types";
 import Image from "next/image";
 import React from "react";
 
-export default function PetList() {
+type PetlistProps = {
+  pets: Pet[];
+};
+
+export default function PetList({ pets }: PetlistProps) {
   return (
     <ul className="bg-white border-b border-black-[0.08]">
-      <li>
-        <button className="flex h-[70px] w-full items-center px-5 cursor-pointer gap-3 text-base hover:bg-[#EFF1F2] focus:bg-[#EFF1F2] transition">
-          <Image
-            src="https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png"
-            alt="Pet`s image"
-            width={45}
-            height={45}
-            className="rounded-full object-cover"
-          />
-          <p>Benjamin</p>
-        </button>
-      </li>
+      {pets.map((pet) => (
+        <li key={pet.id}>
+          <button className="flex h-[70px] w-full items-center px-5 cursor-pointer gap-3 text-base hover:bg-[#EFF1F2] focus:bg-[#EFF1F2] transition">
+            <Image
+              src={pet.imageUrl}
+              alt={pet.name}
+              width={45}
+              height={45}
+              className="w-[45px] h-[45px] rounded-full object-cover"
+            />
+            <p>{pet.name}</p>
+          </button>
+        </li>
+      ))}
     </ul>
   );
 }
