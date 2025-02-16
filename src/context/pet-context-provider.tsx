@@ -11,6 +11,7 @@ type PetContextProviderProps = {
 type TPetContext = {
   pets: Pet[];
   selectedPetId: string | null;
+  handleSetSelectedPetId: (id: string) => void;
 };
 
 export const PetContext = createContext<TPetContext | null>(null);
@@ -22,11 +23,16 @@ export default function PetContextProvider({
   const [pets, setPets] = useState<Pet[]>(data);
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
 
+  const handleSetSelectedPetId = (id: string) => {
+    setSelectedPetId(id);
+  };
+
   return (
     <PetContext.Provider
       value={{
         pets,
         selectedPetId,
+        handleSetSelectedPetId,
       }}
     >
       {children}
