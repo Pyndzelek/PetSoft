@@ -6,7 +6,7 @@ import SearchForm from "@/components/search-form";
 import Stats from "@/components/stats";
 import React from "react";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
   return (
     <main>
       <div className="flex justify-between items-center text-white py-8">
@@ -34,4 +34,3 @@ export default function DashboardPage() {
     </main>
   );
 }
-``;
