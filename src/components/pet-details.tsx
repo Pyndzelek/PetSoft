@@ -15,7 +15,7 @@ export default function PetDetails() {
 
 function TopBar() {
   return (
-    <div className="flex items-center h-[100px] bg-white border-b border-black-[0.08] px-8">
+    <div className="flex items-center h-[100px] bg-white border-b border-light px-8">
       <Image
         src="https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png"
         alt="selected pet image"
@@ -47,7 +47,7 @@ function MiddlePart() {
 
 function PetNotes() {
   return (
-    <section className="bg-white px-7 py-5 rounded-md mb-9 mx-8 mt-10 flex-1 border border-black-[0.08]">
+    <section className="bg-white px-7 py-5 rounded-md mb-9 mx-8 mt-10 flex-1 border border-light">
       Pet's notes
     </section>
   );

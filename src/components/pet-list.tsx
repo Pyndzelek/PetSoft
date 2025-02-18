@@ -3,7 +3,7 @@ import React from "react";
 
 export default function PetList() {
   return (
-    <ul className="bg-white border-b border-black-[0.08]">
+    <ul className="bg-white border-b border-light">
       <li>
         <button className="flex h-[70px] w-full items-center px-5 cursor-pointer gap-3 text-base hover:bg-[#EFF1F2] focus:bg-[#EFF1F2] transition">
           <Image
