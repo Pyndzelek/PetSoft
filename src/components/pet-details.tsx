@@ -13,7 +13,11 @@ export default function PetDetails() {
 
   return (
     <section className="flex flex-col h-full w-full">
-      <TopBar imageUrl={selectedPet.imageUrl} name={selectedPet.name} />
+      <TopBar
+        imageUrl={selectedPet.imageUrl}
+        name={selectedPet.name}
+        id={selectedPet.id}
+      />
 
       <MiddlePart ownerName={selectedPet.ownerName} age={selectedPet.age} />
 
@@ -30,7 +34,17 @@ function EmptyView() {
   );
 }
 
-function TopBar({ imageUrl, name }: { imageUrl: string; name: string }) {
+function TopBar({
+  imageUrl,
+  name,
+  id,
+}: {
+  imageUrl: string;
+  name: string;
+  id: string;
+}) {
+  const { handleCheckoutPet } = usePetContext();
+
   return (
     <div className="flex items-center h-[100px] bg-white border-b border-light px-8">
       <Image
@@ -45,7 +59,9 @@ function TopBar({ imageUrl, name }: { imageUrl: string; name: string }) {
 
       <div className="flex ml-auto gap-2">
         <PetButton actionType="edit">edit</PetButton>
-        <PetButton actionType="checkout">checkout</PetButton>
+        <PetButton actionType="checkout" onClick={() => handleCheckoutPet(id)}>
+          checkout
+        </PetButton>
       </div>
     </div>
   );

@@ -4,9 +4,14 @@ import { Button } from "./ui/button";
 type PetButtonProps = {
   actionType: "add" | "edit" | "checkout";
   children?: React.ReactNode;
+  onClick?: () => void;
 };
 
-export default function PetButton({ actionType, children }: PetButtonProps) {
+export default function PetButton({
+  actionType,
+  children,
+  onClick,
+}: PetButtonProps) {
   switch (actionType) {
     case "add":
       return (
@@ -17,6 +22,10 @@ export default function PetButton({ actionType, children }: PetButtonProps) {
     case "edit":
       return <Button variant="secondary">{children}</Button>;
     case "checkout":
-      return <Button variant="secondary">{children}</Button>;
+      return (
+        <Button variant="secondary" onClick={onClick}>
+          {children}
+        </Button>
+      );
   }
 }
