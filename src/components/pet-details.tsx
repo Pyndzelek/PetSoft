@@ -2,6 +2,7 @@
 import { usePetContext } from "@/lib/hooks";
 import Image from "next/image";
 import H1 from "./h1";
+import PetButton from "./pet-button";
 
 export default function PetDetails() {
   const { selectedPet } = usePetContext();
@@ -41,6 +42,11 @@ function TopBar({ imageUrl, name }: { imageUrl: string; name: string }) {
       />
 
       <h2 className="text-3xl font-semibold leading-7 ml-5">{name}</h2>
+
+      <div className="flex ml-auto gap-2">
+        <PetButton actionType="edit">edit</PetButton>
+        <PetButton actionType="checkout">checkout</PetButton>
+      </div>
     </div>
   );
 }

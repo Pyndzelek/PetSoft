@@ -1,5 +1,6 @@
 import Branding from "@/components/branding";
 import ContentBlock from "@/components/content-block";
+import PetButton from "@/components/pet-button";
 import PetDetails from "@/components/pet-details";
 import PetList from "@/components/pet-list";
 import SearchForm from "@/components/search-form";
@@ -11,7 +12,7 @@ export default async function DashboardPage() {
     <main>
       <div className="flex justify-between items-center text-white py-8">
         <Branding />
-        <Stats currentGuests={5} />
+        <Stats />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-[45px_1fr] grid-rows-[45px_300px_200px] gap-4 md:h-[600px]">
@@ -19,9 +20,12 @@ export default async function DashboardPage() {
           <SearchForm />
         </div>
 
-        <div>
+        <div className="relative">
           <ContentBlock>
             <PetList />
+            <div className="absolute bottom-4 right-4">
+              <PetButton actionType="add" />
+            </div>
           </ContentBlock>
         </div>
 

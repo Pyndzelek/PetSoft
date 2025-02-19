@@ -11,7 +11,7 @@ const routes = [
     path: "/app/dashboard",
   },
   {
-    label: "Aaccount",
+    label: "Account",
     path: "/app/account",
   },
 ];
