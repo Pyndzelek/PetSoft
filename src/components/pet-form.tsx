@@ -15,7 +15,7 @@ export default function PetForm({
   actionType,
   onFormSubmission,
 }: PetFormProps) {
-  const { handleAddPet, selectedPet } = usePetContext();
+  const { handleAddPet, handleEditPet, selectedPet } = usePetContext();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,7 +33,9 @@ export default function PetForm({
       notes: pet.notes as string,
     };
 
-    handleAddPet(newPet);
+    actionType === "add"
+      ? handleAddPet(newPet)
+      : handleEditPet(selectedPet!.id, newPet);
     onFormSubmission();
   };
 
