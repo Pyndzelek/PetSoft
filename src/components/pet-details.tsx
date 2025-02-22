@@ -3,7 +3,6 @@ import { usePetContext } from "@/lib/hooks";
 import Image from "next/image";
 import H1 from "./h1";
 import PetButton from "./pet-button";
-import { deletePet } from "@/actions/actions";
 import { useTransition } from "react";
 
 export default function PetDetails() {
@@ -45,6 +44,7 @@ function TopBar({
   name: string;
   id: string;
 }) {
+  const { handleCheckoutPet } = usePetContext();
   const [isPending, startTransistion] = useTransition();
 
   return (
@@ -64,13 +64,9 @@ function TopBar({
         <PetButton
           actionType="checkout"
           disabled={isPending}
-          onClick={() => {
-            startTransistion(async () => {
-              await deletePet(id);
-            });
-          }}
+          onClick={async () => await handleCheckoutPet(id)}
         >
-          checkout
+          {isPending ? "checking out..." : "checkout"}
         </PetButton>
       </div>
     </div>

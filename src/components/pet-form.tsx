@@ -18,26 +18,28 @@ export default function PetForm({
   actionType,
   onFormSubmission,
 }: PetFormProps) {
-  const { selectedPet } = usePetContext();
+  const { selectedPet, handleAddPet, handleEditPet } = usePetContext();
 
   return (
     <form
       action={async (formData) => {
-        if (actionType === "add") {
-          const error = await addPet(formData);
-          if (error) {
-            toast.warning(error.message);
-            return;
-          }
-        } else if (actionType === "edit") {
-          const error = await editPet(selectedPet!.id, formData);
-          if (error) {
-            toast.warning(error.message);
-            return;
-          }
-        }
-
         onFormSubmission();
+
+        const petData = {
+          name: formData.get("name"),
+          ownerName: formData.get("owner"),
+          imageUrl:
+            formData.get("imageUrl") ||
+            "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
+          age: parseInt(formData.get("age") as string) || 0,
+          notes: formData.get("notes"),
+        };
+
+        if (actionType === "add") {
+          await handleAddPet(petData);
+        } else if (actionType === "edit") {
+          await handleEditPet(selectedPet!.id, petData);
+        }
       }}
       className="flex flex-col space-y-5"
     >
@@ -92,7 +94,7 @@ export default function PetForm({
             name="notes"
             rows={3}
             required
-            defaultValue={actionType === "edit" ? "Allergic to penaut" : ""}
+            defaultValue={actionType === "edit" ? selectedPet?.notes : ""}
           />
         </div>
       </div>
