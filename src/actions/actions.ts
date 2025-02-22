@@ -20,6 +20,7 @@ export async function addPet(pet) {
 }
 
 export async function editPet(petId, newPetData) {
+  await sleep(2000);
   try {
     await prisma.pet.update({
       where: {

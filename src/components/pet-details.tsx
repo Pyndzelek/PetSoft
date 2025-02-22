@@ -66,7 +66,7 @@ function TopBar({
           disabled={isPending}
           onClick={async () => await handleCheckoutPet(id)}
         >
-          {isPending ? "checking out..." : "checkout"}
+          checkout
         </PetButton>
       </div>
     </div>
