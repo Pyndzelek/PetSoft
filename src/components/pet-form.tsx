@@ -5,33 +5,14 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { usePetContext } from "@/lib/hooks";
 import PetFormBtn from "./pet-form-btn";
-import { PetEssentials } from "@/lib/types";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { DEFAULT_PET_IMAGE_URL } from "@/lib/constants";
+import { petFormSchema, TPetForm } from "@/lib/validations";
 
 type PetFormProps = {
   actionType: "add" | "edit";
   onFormSubmission: () => void;
-};
-
-//Schema for ZOD validation
-const petFormSchema = z.object({
-  name: z.string().trim().min(1, { message: "Name is required" }).max(50),
-  // prettier-ignore
-  ownerName: z.string().trim().min(1, { message: "Owner name is required" }).max(50),
-  // prettier-ignore
-  imageUrl: z.union([z.literal(""),z.string().trim().url({ message: "Invalid URL" }).max(255),]),
-  age: z.coerce.number().int().positive().max(30),
-  notes: z.union([z.literal(""), z.string().trim().max(1000)]),
-});
-
-type TPetForm = {
-  name: string;
-  ownerName: string;
-  imageUrl: string;
-  age: number;
-  notes: string;
 };
 
 export default function PetForm({
@@ -43,6 +24,7 @@ export default function PetForm({
   const {
     register,
     trigger,
+    getValues,
     formState: { errors },
   } = useForm<TPetForm>({
     resolver: zodResolver(petFormSchema),
@@ -50,21 +32,16 @@ export default function PetForm({
 
   return (
     <form
-      action={async (formData) => {
+      action={async () => {
         const result = await trigger();
         if (!result) return;
 
         onFormSubmission();
 
-        const petData: PetEssentials = {
-          name: formData.get("name") as string,
-          ownerName: formData.get("owner") as string,
-          imageUrl:
-            (formData.get("imageUrl") as string) ||
-            "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
-          age: parseInt(formData.get("age") as string) || 0,
-          notes: formData.get("notes") as string,
-        };
+        //get the pet object basicly straight from the form using the useForm hook
+        const petData = getValues();
+        petData.imageUrl = petData.imageUrl || DEFAULT_PET_IMAGE_URL;
+        console.log("petData", petData);
 
         if (actionType === "add") {
           await handleAddPet(petData);
@@ -99,7 +76,11 @@ export default function PetForm({
 
         <div className="space-y-1">
           <Label htmlFor="age">Age</Label>
-          <Input id="age" {...register("age")} />
+          <Input
+            id="age"
+            {...register("age", { valueAsNumber: true })}
+            type="number"
+          />
           {errors.age && <p className="text-red-500">{errors.age.message}</p>}
         </div>
 

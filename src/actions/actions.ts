@@ -5,15 +5,24 @@ import { revalidatePath } from "next/cache";
 import { sleep } from "@/lib/utils";
 import { PetEssentials } from "@/lib/types";
 import { Pet } from "@prisma/client";
+import { petFormSchema } from "@/lib/validations";
 
 export async function addPet(pet: PetEssentials) {
+  // Validate the pet object with ZOD schema
+  const validatedPet = petFormSchema.safeParse(pet);
+  if (!validatedPet.success) {
+    return {
+      message: "Invalid pet data",
+    };
+  }
+
   try {
     await prisma.pet.create({
-      data: pet,
+      data: validatedPet.data,
     });
   } catch (error) {
     return {
-      message: "Failed to add pet",
+      message: `Failed to add pet: ${error}`,
     };
   }
 
