@@ -1,5 +1,6 @@
 "use client";
 
+import { addPet } from "@/actions/actions";
 import { Pet } from "@/lib/types";
 import { createContext, useState } from "react";
 
@@ -22,10 +23,9 @@ type TPetContext = {
 export const PetContext = createContext<TPetContext | null>(null);
 
 export default function PetContextProvider({
-  data,
+  data: pets,
   children,
 }: PetContextProviderProps) {
-  const [pets, setPets] = useState<Pet[]>(data);
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
 
   const selectedPet = pets.find((pet) => pet.id === selectedPetId);
@@ -33,11 +33,13 @@ export default function PetContextProvider({
 
   // event handlers / actions
 
-  const handleAddPet = (newPet: Omit<Pet, "id">) => {
-    setPets((prevPets) => [
-      ...prevPets,
-      { ...newPet, id: Date.now().toString() },
-    ]);
+  const handleAddPet = async (newPet: Omit<Pet, "id">) => {
+    // setPets((prevPets) => [
+    //   ...prevPets,
+    //   { ...newPet, id: Date.now().toString() },
+    // ]);
+
+    await addPet(newPet);
   };
 
   const handleEditPet = (petId: string, newPetData: Omit<Pet, "id">) => {
