@@ -3,6 +3,8 @@ import { usePetContext } from "@/lib/hooks";
 import Image from "next/image";
 import H1 from "./h1";
 import PetButton from "./pet-button";
+import { deletePet } from "@/actions/actions";
+import { useTransition } from "react";
 
 export default function PetDetails() {
   const { selectedPet } = usePetContext();
@@ -43,7 +45,7 @@ function TopBar({
   name: string;
   id: string;
 }) {
-  const { handleCheckoutPet } = usePetContext();
+  const [isPending, startTransistion] = useTransition();
 
   return (
     <div className="flex items-center h-[100px] bg-white border-b border-light px-8">
@@ -59,7 +61,15 @@ function TopBar({
 
       <div className="flex ml-auto gap-2">
         <PetButton actionType="edit">edit</PetButton>
-        <PetButton actionType="checkout" onClick={() => handleCheckoutPet(id)}>
+        <PetButton
+          actionType="checkout"
+          disabled={isPending}
+          onClick={() => {
+            startTransistion(async () => {
+              await deletePet(id);
+            });
+          }}
+        >
           checkout
         </PetButton>
       </div>
