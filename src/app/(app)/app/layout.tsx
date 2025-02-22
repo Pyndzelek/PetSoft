@@ -6,6 +6,7 @@ import SearchContextProvider from "@/context/search-context-provider";
 import prisma from "@/lib/db";
 
 import React from "react";
+import { Toaster } from "sonner";
 
 export default async function Layout({
   children,
@@ -25,6 +26,8 @@ export default async function Layout({
         </SearchContextProvider>
         <AppFooter />
       </div>
+
+      <Toaster position="top-right" />
     </>
   );
 }
