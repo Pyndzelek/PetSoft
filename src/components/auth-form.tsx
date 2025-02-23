@@ -2,7 +2,11 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
-export default function AuthForm() {
+type AuthFormProps = {
+  type: "signup" | "login";
+};
+
+export default function AuthForm({ type }: AuthFormProps) {
   return (
     <form action="" className="flex flex-col">
       <div className="space-y-1">
@@ -15,7 +19,9 @@ export default function AuthForm() {
         <Input type="password" id="password" />
       </div>
 
-      <Button className="mt-4 mx-auto">Log in</Button>
+      <Button className="mt-4 mx-auto">
+        {type === "signup" ? "Sign up" : "Log in"}
+      </Button>
     </form>
   );
 }
