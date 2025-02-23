@@ -3,9 +3,18 @@
 import prisma from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { sleep } from "@/lib/utils";
-import { PetEssentials } from "@/lib/types";
-import { Pet } from "@prisma/client";
 import { petFormSchema, petIdSchema } from "@/lib/validations";
+import { signIn } from "@/lib/auth";
+
+// --- User actions ---
+
+export async function LogIn(authData: FormData) {
+  const data = Object.fromEntries(authData.entries());
+
+  await signIn("credentials", data);
+}
+
+// --- Pet actions ---
 
 export async function addPet(pet: unknown) {
   // Validate the pet object with ZOD schema
