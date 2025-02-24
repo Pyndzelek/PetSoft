@@ -7,6 +7,7 @@ import { logInSchema, petFormSchema, petIdSchema } from "@/lib/validations";
 import { auth, signIn, signOut } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
+import { checkAuth } from "@/lib/server-utils";
 
 // --- User actions ---
 
@@ -60,10 +61,7 @@ export async function LogOut() {
 // --- Pet actions ---
 
 export async function addPet(pet: unknown) {
-  const session = await auth();
-  if (!session?.user) {
-    redirect("/login");
-  }
+  const session = await checkAuth();
 
   // Validate the pet object with ZOD schema
   const validatedPet = petFormSchema.safeParse(pet);
@@ -97,10 +95,7 @@ export async function editPet(petId: unknown, newPetData: unknown) {
   await sleep(1000);
 
   //authentication check
-  const session = await auth();
-  if (!session?.user) {
-    redirect("/login");
-  }
+  const session = await checkAuth();
 
   // Validate the data with ZOD schemas
   const validatedPetId = petIdSchema.safeParse(petId);
@@ -152,10 +147,7 @@ export async function deletePet(petId: unknown) {
   await sleep(1000);
 
   //authentication check
-  const session = await auth();
-  if (!session?.user) {
-    redirect("/login");
-  }
+  const session = await checkAuth();
 
   const validatedPetId = petIdSchema.safeParse(petId);
   if (!validatedPetId.success) {
