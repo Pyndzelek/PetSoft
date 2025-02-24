@@ -3,7 +3,7 @@
 import prisma from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { sleep } from "@/lib/utils";
-import { logInSchema, petFormSchema, petIdSchema } from "@/lib/validations";
+import { authSchema, petFormSchema, petIdSchema } from "@/lib/validations";
 import { auth, signIn, signOut } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
@@ -11,36 +11,27 @@ import { checkAuth, getUserIDByPetId } from "@/lib/server-utils";
 
 // --- User actions ---
 
-export async function SignUp(formData: FormData) {
-  // const data = Object.fromEntries(formData.entries());
+export async function SignUp(formData: unknown) {
+  //check is formdata is formData type
+  if (!(formData instanceof FormData)) {
+    return { message: "Invalid form data" };
+  }
 
-  // const validatedData = logInSchema.safeParse(data);
-  // if (!validatedData.success) {
-  //   return;
-  // }
-  // const hashedPassword = await bcrypt.hash(validatedData.data.password, 10);
+  //convert the formData to a javascript object
+  const formDataObject = Object.fromEntries(formData.entries());
+  //validate the object using zod schema
+  const validatedFormDataObject = authSchema.safeParse(formDataObject);
+  if (!validatedFormDataObject.success) {
+    return { message: "Invalid form data" };
+  }
+  //refactor the object and use the data
+  const { email, password } = validatedFormDataObject.data;
 
-  // try {
-  //   await prisma.user.create({
-  //     data: {
-  //       email: validatedData.data.email,
-  //       hashedPassword,
-  //     },
-  //   });
-
-  //   await signIn("credentials", validatedData.data);
-  // } catch (error) {
-  //   return;
-  // }
-
-  const hashedPassword = await bcrypt.hash(
-    formData.get("password") as string,
-    10
-  );
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   await prisma.user.create({
     data: {
-      email: formData.get("email") as string,
+      email,
       hashedPassword,
     },
   });
@@ -48,10 +39,17 @@ export async function SignUp(formData: FormData) {
   await signIn("credentials", formData);
 }
 
-export async function LogIn(authData: FormData) {
-  const data = Object.fromEntries(authData.entries());
+export async function LogIn(formData: unknown) {
+  if (!(formData instanceof FormData)) {
+    return { message: "Invalid form data" };
+  }
+  const formDataObject = Object.fromEntries(formData.entries());
+  const validatedFormDataObject = authSchema.safeParse(formDataObject);
+  if (!validatedFormDataObject.success) {
+    return { message: "Invalid form data" };
+  }
 
-  await signIn("credentials", data);
+  await signIn("credentials", formData);
 }
 
 export async function LogOut() {

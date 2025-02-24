@@ -2,12 +2,14 @@ import { z } from "zod";
 import { DEFAULT_PET_IMAGE_URL } from "./constants";
 
 // ---User Validations---
-export const logInSchema = z.object({
+export const authSchema = z.object({
   email: z.string().email({ message: "Invalid email" }),
   password: z
     .string()
-    .min(6, { message: "Password must be at least 6 characters" }),
+    .min(3, { message: "Password must be at least 6 characters" }),
 });
+
+export type TAuthForm = z.infer<typeof authSchema>;
 
 // ---Pet Validations---
 
