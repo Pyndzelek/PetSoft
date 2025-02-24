@@ -15,7 +15,7 @@ export const { auth, signIn, signOut } = NextAuth({
 
         const user = await prisma.user.findUnique({
           where: {
-            email,
+            email: email,
           },
         });
         if (!user) {
@@ -57,10 +57,12 @@ export const { auth, signIn, signOut } = NextAuth({
 
       return false;
     },
-    //thats how to pass user id around the app (exposed to the client)
+    // thats how to pass user id around the app (exposed to the client)
     jwt: ({ token, user }) => {
       if (user) {
-        token.userId = user.id;
+        if (user.id) {
+          token.userId = user.id;
+        }
       }
       return token;
     },

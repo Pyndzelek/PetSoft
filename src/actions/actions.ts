@@ -4,7 +4,7 @@ import prisma from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { sleep } from "@/lib/utils";
 import { logInSchema, petFormSchema, petIdSchema } from "@/lib/validations";
-import { signIn, signOut } from "@/lib/auth";
+import { auth, signIn, signOut } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
 
@@ -60,6 +60,14 @@ export async function LogOut() {
 // --- Pet actions ---
 
 export async function addPet(pet: unknown) {
+  console.log("addPet", pet);
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/login");
+  }
+
+  console.log("session", session);
+
   // Validate the pet object with ZOD schema
   const validatedPet = petFormSchema.safeParse(pet);
   if (!validatedPet.success) {
@@ -70,7 +78,14 @@ export async function addPet(pet: unknown) {
 
   try {
     await prisma.pet.create({
-      data: validatedPet.data,
+      data: {
+        ...validatedPet.data,
+        user: {
+          connect: {
+            id: session.user.id,
+          },
+        },
+      },
     });
   } catch (error) {
     return {
