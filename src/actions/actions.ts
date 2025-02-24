@@ -7,7 +7,7 @@ import { logInSchema, petFormSchema, petIdSchema } from "@/lib/validations";
 import { auth, signIn, signOut } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
-import { checkAuth } from "@/lib/server-utils";
+import { checkAuth, getUserIDByPetId } from "@/lib/server-utils";
 
 // --- User actions ---
 
@@ -107,21 +107,13 @@ export async function editPet(petId: unknown, newPetData: unknown) {
   }
 
   //authorization check
-  const userId = await prisma.pet.findUnique({
-    where: {
-      id: validatedPetId.data,
-    },
-    //we only want to get the user ID from database
-    select: {
-      userId: true,
-    },
-  });
+  const userId = await getUserIDByPetId(validatedPetId.data);
   if (!userId) {
     return {
       message: "Pet not found",
     };
   }
-  if (userId.userId !== session.user.id) {
+  if (userId !== session.user.id) {
     return {
       message: "Unauthorized",
     };
@@ -155,21 +147,13 @@ export async function deletePet(petId: unknown) {
   }
 
   //authorization check
-  const userId = await prisma.pet.findUnique({
-    where: {
-      id: validatedPetId.data,
-    },
-    //we only want to get the user ID from database
-    select: {
-      userId: true,
-    },
-  });
+  const userId = await getUserIDByPetId(validatedPetId.data);
   if (!userId) {
     return {
       message: "Pet not found",
     };
   }
-  if (userId.userId !== session.user.id) {
+  if (userId !== session.user.id) {
     return {
       message: "Unauthorized",
     };
