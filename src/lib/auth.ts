@@ -3,7 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import prisma from "@/lib/db";
 import bcrypt from "bcryptjs";
 
-export const { auth, signIn } = NextAuth({
+export const { auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/login",
   },
