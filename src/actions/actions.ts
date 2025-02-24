@@ -8,10 +8,13 @@ import { signIn, signOut } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 import { checkAuth, getUserIDByPetId } from "@/lib/server-utils";
 import { Prisma } from "@prisma/client";
+import { AuthError } from "next-auth";
+import { redirect } from "next/navigation";
 
 // --- User actions ---
 
-export async function SignUp(formData: unknown) {
+//the "prevstate" is just for the useFormState hook to handle errors and loading state
+export async function SignUp(prevState: unknown, formData: unknown) {
   await sleep();
   //check is formdata is formData type
   if (!(formData instanceof FormData)) {
@@ -47,9 +50,10 @@ export async function SignUp(formData: unknown) {
   }
 
   await signIn("credentials", formData);
+  redirect("/app/dashboard");
 }
 
-export async function LogIn(formData: unknown) {
+export async function LogIn(prevState: unknown, formData: unknown) {
   await sleep(1000);
   if (!(formData instanceof FormData)) {
     return { message: "Invalid form data" };
@@ -59,8 +63,20 @@ export async function LogIn(formData: unknown) {
   if (!validatedFormDataObject.success) {
     return { message: "Invalid form data" };
   }
-
-  await signIn("credentials", formData);
+  try {
+    await signIn("credentials", formData);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case "CredentialsSignin":
+          return { message: "Wrong email or password" };
+        default:
+          return { message: `Failed to sign in: ${error}` };
+      }
+    }
+    throw error; // next-js redirect throws ann error so we want to throw it away XD
+  }
+  redirect("/app/dashboard");
 }
 
 export async function LogOut() {

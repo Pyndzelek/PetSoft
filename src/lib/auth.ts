@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import prisma from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { authSchema } from "./validations";
+import { NextResponse } from "next/server";
 
 export const {
   auth,
@@ -53,6 +54,9 @@ export const {
       const isTryingToAccessApp = request.nextUrl.pathname.includes("/app");
       const isLoggedIn = Boolean(auth?.user);
 
+      console.log("isTryingToAccessApp", isTryingToAccessApp);
+      console.log("isLoggedIn", isLoggedIn);
+
       if (isTryingToAccessApp && !isLoggedIn) {
         return false;
       }
@@ -60,8 +64,11 @@ export const {
         return true;
       }
       if (isLoggedIn && !isTryingToAccessApp) {
+        console.log("redirecting to dashboard");
         //redirect to dashboard
-        return Response.redirect(new URL("/app/dashboard", request.nextUrl));
+        return NextResponse.redirect(
+          new URL("/app/dashboard", request.nextUrl)
+        );
       }
       if (!isLoggedIn && !isTryingToAccessApp) {
         return true;
