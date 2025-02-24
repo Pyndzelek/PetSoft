@@ -60,13 +60,10 @@ export async function LogOut() {
 // --- Pet actions ---
 
 export async function addPet(pet: unknown) {
-  console.log("addPet", pet);
   const session = await auth();
   if (!session?.user) {
     redirect("/login");
   }
-
-  console.log("session", session);
 
   // Validate the pet object with ZOD schema
   const validatedPet = petFormSchema.safeParse(pet);
@@ -99,12 +96,39 @@ export async function addPet(pet: unknown) {
 export async function editPet(petId: unknown, newPetData: unknown) {
   await sleep(1000);
 
+  //authentication check
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/login");
+  }
+
   // Validate the data with ZOD schemas
   const validatedPetId = petIdSchema.safeParse(petId);
   const validatedPet = petFormSchema.safeParse(newPetData);
   if (!validatedPet.success || !validatedPetId.success) {
     return {
       message: "Invalid pet data",
+    };
+  }
+
+  //authorization check
+  const userId = await prisma.pet.findUnique({
+    where: {
+      id: validatedPetId.data,
+    },
+    //we only want to get the user ID from database
+    select: {
+      userId: true,
+    },
+  });
+  if (!userId) {
+    return {
+      message: "Pet not found",
+    };
+  }
+  if (userId.userId !== session.user.id) {
+    return {
+      message: "Unauthorized",
     };
   }
 
@@ -127,9 +151,36 @@ export async function editPet(petId: unknown, newPetData: unknown) {
 export async function deletePet(petId: unknown) {
   await sleep(1000);
 
+  //authentication check
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/login");
+  }
+
   const validatedPetId = petIdSchema.safeParse(petId);
   if (!validatedPetId.success) {
     return { message: "Invalid pet ID" };
+  }
+
+  //authorization check
+  const userId = await prisma.pet.findUnique({
+    where: {
+      id: validatedPetId.data,
+    },
+    //we only want to get the user ID from database
+    select: {
+      userId: true,
+    },
+  });
+  if (!userId) {
+    return {
+      message: "Pet not found",
+    };
+  }
+  if (userId.userId !== session.user.id) {
+    return {
+      message: "Unauthorized",
+    };
   }
 
   try {
