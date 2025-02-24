@@ -3,7 +3,6 @@ import H1 from "@/components/h1";
 import React from "react";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import SignOutBtn from "@/components/sign-out-btn";
 
 export default async function AccountPage() {

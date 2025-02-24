@@ -43,11 +43,19 @@ export const { auth, signIn, signOut } = NextAuth({
 
       if (isTryingToAccessApp && !isLoggedIn) {
         return false;
-      } else if (isTryingToAccessApp && isLoggedIn) {
-        return true;
-      } else if (!isTryingToAccessApp) {
+      }
+      if (isTryingToAccessApp && isLoggedIn) {
         return true;
       }
+      if (isLoggedIn && !isTryingToAccessApp) {
+        //redirect to dashboard
+        return Response.redirect(new URL("/app/dashboard", request.nextUrl));
+      }
+      if (!isLoggedIn && !isTryingToAccessApp) {
+        return true;
+      }
+
+      return false;
     },
   },
 });
