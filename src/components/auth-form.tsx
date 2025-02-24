@@ -1,13 +1,17 @@
+"use client";
+
 import { LogIn, SignUp } from "@/actions/actions";
-import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import AuthFormBtn from "./auth-form-btn";
 
 type AuthFormProps = {
   type: "signup" | "login";
 };
 
 export default function AuthForm({ type }: AuthFormProps) {
+  //this is to get the loading state as well as errors
+
   return (
     <form action={type === "login" ? LogIn : SignUp} className="flex flex-col">
       <div className="space-y-1">
@@ -20,9 +24,7 @@ export default function AuthForm({ type }: AuthFormProps) {
         <Input type="password" id="password" name="password" required />
       </div>
 
-      <Button className="mt-4 mx-auto">
-        {type === "signup" ? "Sign up" : "Log in"}
-      </Button>
+      <AuthFormBtn type={type} />
     </form>
   );
 }

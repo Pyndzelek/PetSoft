@@ -4,14 +4,15 @@ import prisma from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { sleep } from "@/lib/utils";
 import { authSchema, petFormSchema, petIdSchema } from "@/lib/validations";
-import { auth, signIn, signOut } from "@/lib/auth";
+import { signIn, signOut } from "@/lib/auth";
 import bcrypt from "bcryptjs";
-import { redirect } from "next/navigation";
 import { checkAuth, getUserIDByPetId } from "@/lib/server-utils";
+import { Prisma } from "@prisma/client";
 
 // --- User actions ---
 
 export async function SignUp(formData: unknown) {
+  await sleep();
   //check is formdata is formData type
   if (!(formData instanceof FormData)) {
     return { message: "Invalid form data" };
@@ -29,17 +30,27 @@ export async function SignUp(formData: unknown) {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  await prisma.user.create({
-    data: {
-      email,
-      hashedPassword,
-    },
-  });
+  try {
+    await prisma.user.create({
+      data: {
+        email,
+        hashedPassword,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return { message: "Email already in use" };
+      }
+    }
+    return { message: `Failed to sign up: ${error}` };
+  }
 
   await signIn("credentials", formData);
 }
 
 export async function LogIn(formData: unknown) {
+  await sleep(1000);
   if (!(formData instanceof FormData)) {
     return { message: "Invalid form data" };
   }
