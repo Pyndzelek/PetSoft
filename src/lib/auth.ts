@@ -13,25 +13,25 @@ export const { auth, signIn, signOut } = NextAuth({
         //runs on login
         const { email, password } = credentials;
 
-        const userDB = await prisma.user.findUnique({
+        const user = await prisma.user.findUnique({
           where: {
             email,
           },
         });
-        if (!userDB) {
+        if (!user) {
           console.log("User not found");
           return null;
         }
         const passwordMatch = await bcrypt.compare(
           password,
-          userDB.hashedPassword
+          user.hashedPassword
         );
         if (!passwordMatch) {
           console.log("Invalid credentials");
           return null;
         }
 
-        return userDB;
+        return user;
       },
     }),
   ],
@@ -56,6 +56,19 @@ export const { auth, signIn, signOut } = NextAuth({
       }
 
       return false;
+    },
+    //thats how to pass user id around the app (exposed to the client)
+    jwt: ({ token, user }) => {
+      if (user) {
+        token.userId = user.id;
+      }
+      return token;
+    },
+    session: ({ session, token }) => {
+      if (session.user) {
+        session.user.id = token.userId;
+      }
+      return session;
     },
   },
 });
